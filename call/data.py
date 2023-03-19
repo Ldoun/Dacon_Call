@@ -23,15 +23,15 @@ def construct_graph(feature, device):
     #counselling calls {0, more than 0, more than 10}
     #voice Mailbox Usage {0~1, 2, more than 2}
     
-    cordinate = torch.LongTensor().to(device)
+    cordinate = torch.tensor(device=device,dtype=torch.long)
     for condition, target in [['same', 0], ['range',[1,10]], ['over',10]]:
         node_list = get_condition_satisfied_idx(feature, '음성사서함이용', condition, target)
-        cordinate = torch.concat([combinations(torch.LongTensor(node_list, device=device), 2), cordinate], axis=0)
+        cordinate = torch.concat([combinations(torch.tensor(node_list, device=device,dtype=torch.long), 2), cordinate], axis=0)
         print(f'음성사서함이용 {condition} {target} -> edge added')
     
     for condition, target in [['range', [0,1]], ['same',2], ['over',2]]:
         node_list = get_condition_satisfied_idx(feature, '상담전화건수', condition, target)
-        cordinate = torch.concat([combinations(torch.LongTensor(node_list, device=device), 2), cordinate], axis=0)
+        cordinate = torch.concat([combinations(torch.tensor(node_list, device=device,dtype=torch.long), 2), cordinate], axis=0)
         print(f'상담전화건수 {condition} {target} -> edge added')
     
     sparse_tensor = sparse_coo_tensor(cordinate.T, torch.ones(cordinate.shape[0], dtype=bool, device=device))
