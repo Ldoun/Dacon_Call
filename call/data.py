@@ -10,7 +10,8 @@ def construct_graph(feature, device):
         similarity = f.cosine_similarity(sample, feature, dim=1)
         similarity[index] = 0.
         _, top_similar_samples = similarity.topk(5)
-        cordinate.concat([cordinate, top_similar_samples], axis=1)
+        temp = torch.stack([torch.tensor([index]*len(top_similar_samples)), top_similar_samples],dim=1)
+        cordinate.concat([cordinate, temp], axis=1)
 
     return cordinate.T
 
