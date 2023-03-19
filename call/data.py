@@ -24,21 +24,21 @@ def construct_graph(feature):
     #counselling calls {0, more than 0, more than 10}
     #voice Mailbox Usage {0~1, 2, more than 2}
     
-    row = np.array()
-    col = np.array()
+    row = np.array([])
+    col = np.array([])
     for condition, target in [['same', 0], ['range',[1,10]], ['over',10]]:
         node_list = get_condition_satisfied_idx(feature, '음성사서함이용', condition, target)
         t_row, t_col = zip(*combinations_with_replacement(node_list, 2))
         row = np.append(row, np.array(t_row))
         col = np.append(col, np.array(t_col))
-        print(f'음성사서함이용 {condition} {target} edge added')
+        print(f'음성사서함이용 {condition} {target} -> edge added')
     
     for condition, target in [['range', [0,1]], ['same',2], ['over',2]]:
         node_list = get_condition_satisfied_idx(feature, '상담전화건수', condition, target)
         t_row, t_col = zip(*combinations_with_replacement(node_list, 2))
         row = np.append(row, np.array(t_row))
         col = np.append(col, np.array(t_col))
-        print(f'상담전화건수 {condition} {target} edge added')
+        print(f'상담전화건수 {condition} {target} -> edge added')
     
 
     sparse_matrix = coo_array((np.ones(len(row), dtype=bool),(row, col)))
