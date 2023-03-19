@@ -1,8 +1,9 @@
 import os
-import networkx as nx
+import numpy as np
+from scipy.sparse import coo_array
 import pandas as pd
 from itertools import combinations_with_replacement
-from torch_geometric.utils.convert import from_networkx
+from torch_geometric.utils.convert import from_scipy_sparse_matrix
 
 def get_condition_satisfied_idx(data, col_name, condition, target):
     feat = data[col_name]
@@ -23,18 +24,25 @@ def construct_graph(feature):
     #counselling calls {0, more than 0, more than 10}
     #voice Mailbox Usage {0~1, 2, more than 2}
     
-    graph = nx.Graph()
+    row = np.array()
+    col = np.array()
     for condition, target in [['same', 0], ['range',[1,10]], ['over',10]]:
         node_list = get_condition_satisfied_idx(feature, '음성사서함이용', condition, target)
-        graph.add_edges_from(combinations_with_replacement(node_list, 2))
+        t_row, t_col = zip(*combinations_with_replacement(node_list, 2))
+        row = np.append(row, np.array(t_row))
+        col = np.append(col, np.array(t_col))
         print(f'음성사서함이용 {condition} {target} edge added')
     
     for condition, target in [['range', [0,1]], ['same',2], ['over',2]]:
         node_list = get_condition_satisfied_idx(feature, '상담전화건수', condition, target)
-        graph.add_edges_from(combinations_with_replacement(node_list, 2))
+        t_row, t_col = zip(*combinations_with_replacement(node_list, 2))
+        row = np.append(row, np.array(t_row))
+        col = np.append(col, np.array(t_col))
         print(f'상담전화건수 {condition} {target} edge added')
     
-    return from_networkx(graph)
+
+    sparse_matrix = coo_array((np.ones(len(row), dtype=bool),(row, col)))
+    return from_scipy_sparse_matrix(sparse_matrix)
 
 def load_csv_data(path):
     train_csv = os.path.join(path, 'train.csv')
