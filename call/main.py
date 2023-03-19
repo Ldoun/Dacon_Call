@@ -15,13 +15,14 @@ if __name__ == "__main__":
     print(args)
 
     seed_everything(args.seed)
-    model_module = importlib.import_module("torch_geometric.nn.models."+args.model)
+    model_module = importlib.import_module("torch_geometric.nn.models")
+    model = getattr(model_module, args.model)
 
     train_x, train_y, test_x = load_csv_data(args.raw_path)
     all_x = pd.concat([train_x, test_x], axis = 0)
     skf = StratifiedKFold(n_splits=args.n_fold, random_state=args.seed, shuffle=True)
     
-    model = model_module(
+    model = model(
         in_channels=train_x.shape[1], hidden_channels=args.hidden, num_layers=2, out_channels=1, dropout=args.drop_p
     )
     print(model)
@@ -29,7 +30,7 @@ if __name__ == "__main__":
     test_predictoins = []
     for fold_idx, (train_idx, valid_idx) in enumerate(skf.split(train_x, train_y)):
         model.reset_parameters()
-        train_graph = construct_graph(train_x.iloc[train_x, :])
+        train_graph = construct_graph(train_x.loc[train_x, :])
         valid_graph = construct_graph(train_x)
         test_graph = construct_graph(all_x)
 
@@ -45,7 +46,7 @@ if __name__ == "__main__":
 
         for epoch in args.epochs:
             model.train()
-            train_out = model(train_x.iloc[train_idx], train_graph)
+            train_out = model(train_x.loc[train_idx], train_graph)
             train_loss = loss_fn(train_out, train_y[train_idx]) #compute loss for train set, graph(only with train node)
             optimizer.zero_grad()
             train_loss.backward()
