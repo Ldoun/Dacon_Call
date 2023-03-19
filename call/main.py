@@ -39,29 +39,31 @@ if __name__ == "__main__":
         # ], lr=args.lr) #GCN model optimizer
 
         optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
-        pos_weight = [(train_y[train_idx]==0).sum()/train_y[train_idx].sum()]
+        pos_weight = [(train_y.loc[train_idx]==0).sum()/train_y.loc[train_idx].sum()]
         print(f"Using pos_weight of {pos_weight} for positive classs")
-        loss_fn = torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight)
-
-        for epoch in args.epochs:
+        loss_fn = torch.nn.BCEWithLogitsLoss(pos_weight=torch.FloatTensor(pos_weight))
+        
+        train_tensor_x = torch.FloatTensor(train_x)
+        train_tensor_y = torch.FloatTensor(train_y)
+        for epoch in range(1, args.epochs+1):
             model.train()
-            train_out = model(train_x.loc[train_idx], train_graph)
-            train_loss = loss_fn(train_out, train_y[train_idx]) #compute loss for train set, graph(only with train node)
+            train_out = model(train_tensor_x[train_idx], train_graph)
+            train_loss = loss_fn(train_out, train_tensor_y[train_idx]) #compute loss for train set, graph(only with train node)
             optimizer.zero_grad()
             train_loss.backward()
             optimizer.step()
-            train_f1_score = f1_score(train_y[train_idx].cpu().numpy(), train_out.detach().cpu().numpy())
+            train_f1_score = f1_score(train_y.loc[train_idx], train_out.detach().cpu().numpy())
 
             model.eval()
             with torch.no_grad():
-                valid_out = model(train_x, valid_graph)
-                valid_loss = loss_fn(valid_out[valid_idx], train_y[valid_idx]) #compute loss for valid set, graph(with train&valid node)
-                valid_f1_score = f1_score(train_y[train_idx].cpu().numpy(), valid_out[valid_idx].detach().cpu().numpy())
+                valid_out = model(train_tensor_x, valid_graph)
+                valid_loss = loss_fn(valid_out[valid_idx], train_tensor_y[valid_idx]) #compute loss for valid set, graph(with train&valid node)
+                valid_f1_score = f1_score(train_y.loc[valid_idx], valid_out[valid_idx].detach().cpu().numpy())
             
             print(f"{epoch}-epoch: t_loss {train_loss.item()} t_f1 {train_f1_score} v_loss {valid_loss.item()} v_f1 {valid_f1_score}")
 
         model.eval()
         test_graph = construct_graph(all_x)
         with torch.no_grad():
-            test_predictoins.append(model(all_x, test_graph).detach().cpu().numpy())
+            test_predictoins.append(model(torch.FloatTensor(all_x), test_graph).detach().cpu().numpy())
 
