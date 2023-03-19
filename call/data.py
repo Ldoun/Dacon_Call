@@ -1,11 +1,8 @@
 import os
-import numpy as np
-from scipy.sparse import coo_array
 import pandas as pd
 
 import torch
 from torch import combinations, sparse_coo_tensor
-from torch_geometric.utils import to_edge_index
 
 def get_condition_satisfied_idx(data, col_name, condition, target):
     feat = data[col_name]
