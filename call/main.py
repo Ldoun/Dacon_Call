@@ -43,10 +43,10 @@ if __name__ == "__main__":
         optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
         pos_weight = [(train_y.loc[train_idx]==0).sum()/train_y.loc[train_idx].sum()]
         print(f"Using pos_weight of {pos_weight} for positive classs")
-        loss_fn = torch.nn.BCEWithLogitsLoss(pos_weight=torch.FloatTensor(pos_weight))
+        loss_fn = torch.nn.BCEWithLogitsLoss(pos_weight=torch.tensor(pos_weight, dtype=torch.float, device=device))
         
         train_tensor_x = torch.tensor(train_x.values, dtype=torch.float, device=device)
-        train_tensor_y = torch.tensor(train_y.values, dtype=torch.float, device=device)
+        train_tensor_y = torch.tensor(train_y.values, dtype=torch.float, device=device).unsqueeze(-1)
         for epoch in range(1, args.epochs+1):
             model.train()
             train_out = model(train_tensor_x[train_idx], train_graph)
