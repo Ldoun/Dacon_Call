@@ -38,7 +38,7 @@ def construct_graph(feature):
         print(f'상담전화건수 {condition} {target} -> edge added')
     
     sparse_tensor = sparse_coo_tensor(cordinate.T, torch.ones(cordinate.shape[0], dtype=bool))
-    return to_edge_index(sparse_tensor)
+    return sparse_tensor
 
 def load_csv_data(path):
     train_csv = os.path.join(path, 'train.csv')
