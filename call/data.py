@@ -24,16 +24,16 @@ def construct_graph(feature, device):
     #voice Mailbox Usage {0~1, 2, more than 2}
     
     cordinate = torch.tensor([], device=device,dtype=torch.long)
-    for condition, target in [['same', 0], ['same',1], ['range',[2,5]], ['range',[6,10]], ['range',[11,15]], ['range',[16,22]], ['range',[23,125]] , ['range',[126,249]], ['over', 250]]:
-        node_list = get_condition_satisfied_idx(feature, '음성사서함이용', condition, target)
+    for target in range(0, max(feature['음성사서함이용'])+1):
+        node_list = get_condition_satisfied_idx(feature, '음성사서함이용', 'same', target)
         cordinate = torch.concat([combinations(torch.tensor(node_list, device=device,dtype=torch.long), 2), cordinate], axis=0)
-        print(f'음성사서함이용 {condition} {target} -> edge added')
+        print(f'음성사서함이용 same {target} -> edge added')
     print(f'added {cordinate.shape[0]} edges')
     
-    for target in range(1, max(feature['상담전화건수']),3):
-        node_list = get_condition_satisfied_idx(feature, '상담전화건수', 'range', [target-1, target+1])
+    for target in range(0, max(feature['상담전화건수'])+1):
+        node_list = get_condition_satisfied_idx(feature, '상담전화건수', 'same', target)
         cordinate = torch.concat([combinations(torch.tensor(node_list, device=device,dtype=torch.long), 2), cordinate], axis=0)
-        print(f'상담전화건수 range {[target-1, target+1]} -> edge added')
+        print(f'상담전화건수 same {target} -> edge added')
     
     #sparse_tensor = sparse_coo_tensor(cordinate.T, torch.ones(cordinate.shape[0], dtype=bool, device=device))
     print(f'added {cordinate.shape[0]} edges')
