@@ -23,7 +23,7 @@ def construct_graph(feature, device):
     #counselling calls {0, more than 0, more than 10}
     #voice Mailbox Usage {0~1, 2, more than 2}
     
-    cordinate = torch.LongTensor(device=device)
+    cordinate = torch.LongTensor().to(device)
     for condition, target in [['same', 0], ['range',[1,10]], ['over',10]]:
         node_list = get_condition_satisfied_idx(feature, '음성사서함이용', condition, target)
         cordinate = torch.concat([combinations(torch.LongTensor(node_list, device=device), 2), cordinate], axis=0)
