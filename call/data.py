@@ -2,41 +2,16 @@ import os
 import pandas as pd
 
 import torch
-from torch import combinations, sparse_coo_tensor
-
-def get_condition_satisfied_idx(data, col_name, condition, target):
-    feat = data[col_name]
-    if condition == 'same':
-        return feat[feat == target].index
-    elif condition == 'over':
-        return feat[feat > target].index
-    elif condition == 'under':
-        return feat[feat < target].index
-    elif condition == 'range':
-        return feat[(feat >= target[0]) & (feat <= target[1])].index
-    else:
-        raise "condition not satisfied"
-
+import torch.nn.functional as f
 
 def construct_graph(feature, device):
-    #construct graph by counselling calls & voice Mailbox Usage
-    #counselling calls {0, more than 0, more than 10}
-    #voice Mailbox Usage {0~1, 2, more than 2}
-    
-    cordinate = torch.tensor([], device=device,dtype=torch.long)
-    for target in range(0, max(feature['음성사서함이용'])+1):
-        node_list = get_condition_satisfied_idx(feature, '음성사서함이용', 'same', target)
-        cordinate = torch.concat([combinations(torch.tensor(node_list, device=device,dtype=torch.long), 2), cordinate], axis=0)
-        print(f'음성사서함이용 same {target} -> edge added')
-    print(f'added {cordinate.shape[0]} edges')
-    
-    for target in range(0, max(feature['상담전화건수'])+1):
-        node_list = get_condition_satisfied_idx(feature, '상담전화건수', 'same', target)
-        cordinate = torch.concat([combinations(torch.tensor(node_list, device=device,dtype=torch.long), 2), cordinate], axis=0)
-        print(f'상담전화건수 same {target} -> edge added')
-    
-    #sparse_tensor = sparse_coo_tensor(cordinate.T, torch.ones(cordinate.shape[0], dtype=bool, device=device))
-    print(f'added {cordinate.shape[0]} edges')
+    cordinate = torch.tensor([], dtype=torch.long, device=device)
+    for index, sample in enumerate(feature):
+        similarity = f.cosine_similarity(sample, feature, dim=1)
+        similarity[index] = 0.
+        _, top_similar_samples = similarity.topk(5)
+        cordinate.concat([cordinate, top_similar_samples], axis=1)
+
     return cordinate.T
 
 def load_csv_data(path):
