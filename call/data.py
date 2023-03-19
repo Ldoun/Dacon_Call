@@ -14,6 +14,8 @@ def get_condition_satisfied_idx(data, col_name, condition, target):
         return feat[feat < target].index
     elif condition == 'range':
         return feat[(feat >= target[0]) & (feat <= target[1])].index
+    else:
+        raise "condition not satisfied"
 
 
 def construct_graph(feature):
@@ -22,13 +24,15 @@ def construct_graph(feature):
     #voice Mailbox Usage {0~1, 2, more than 2}
     
     graph = nx.Graph()
-    for condition, target in [['same', 0], ['rage',[1,10]], ['over',10]]:
+    for condition, target in [['same', 0], ['range',[1,10]], ['over',10]]:
         node_list = get_condition_satisfied_idx(feature, '음성사서함이용', condition, target)
         graph.add_edges_from(combinations_with_replacement(node_list, 2))
+        print(f'음성사서함이용 {condition} {target} edge added')
     
     for condition, target in [['range', [0,1]], ['same',2], ['over',2]]:
         node_list = get_condition_satisfied_idx(feature, '상담전화건수', condition, target)
         graph.add_edges_from(combinations_with_replacement(node_list, 2))
+        print(f'상담전화건수 {condition} {target} edge added')
     
     return from_networkx(graph)
 
