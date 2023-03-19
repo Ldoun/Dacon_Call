@@ -24,10 +24,10 @@ def construct_graph(feature, device):
     #voice Mailbox Usage {0~1, 2, more than 2}
     
     cordinate = torch.tensor([], device=device,dtype=torch.long)
-    for target in range(1,max(feature['음성사서함이용'])):
-        node_list = get_condition_satisfied_idx(feature, '음성사서함이용', 'range', [target-1, target+1])
+    for condition, target in [['same', 0], ['same',1], ['range',[2,5]], ['range',[6,10]], ['range',[11,15]], ['range',[16,22]], ['range',[23,125]] , ['range',[126,249]], ['over', 250]]:
+        node_list = get_condition_satisfied_idx(feature, '음성사서함이용', condition, [target-1, target+1])
         cordinate = torch.concat([combinations(torch.tensor(node_list, device=device,dtype=torch.long), 2), cordinate], axis=0)
-        print(f'음성사서함이용 range {[target-1, target+1]} -> edge added')
+        print(f'음성사서함이용 {condition} {[target-1, target+1]} -> edge added')
     
     for target in range(1, max(feature['상담전화건수'])):
         node_list = get_condition_satisfied_idx(feature, '상담전화건수', 'range', [target-1, target+1])
