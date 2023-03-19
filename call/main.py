@@ -45,8 +45,8 @@ if __name__ == "__main__":
         print(f"Using pos_weight of {pos_weight} for positive classs")
         loss_fn = torch.nn.BCEWithLogitsLoss(pos_weight=torch.FloatTensor(pos_weight))
         
-        train_tensor_x = torch.FloatTensor(train_x.values, device=device)
-        train_tensor_y = torch.FloatTensor(train_y.values, device=device)
+        train_tensor_x = torch.tensor(train_x.values, dtype=torch.float, device=device)
+        train_tensor_y = torch.tensor(train_y.values, dtype=torch.float, device=device)
         for epoch in range(1, args.epochs+1):
             model.train()
             train_out = model(train_tensor_x[train_idx], train_graph)
@@ -67,5 +67,5 @@ if __name__ == "__main__":
         model.eval()
         test_graph = construct_graph(all_x, device)
         with torch.no_grad():
-            test_predictoins.append(model(torch.FloatTensor(all_x, device=device), test_graph).detach().cpu().numpy())
+            test_predictoins.append(model(torch.tensor(all_x, dtype=torch.float, device=device), test_graph).detach().cpu().numpy())
 
