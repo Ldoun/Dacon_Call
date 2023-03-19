@@ -58,7 +58,7 @@ if __name__ == "__main__":
             prediction = train_out.detach().cpu().numpy()
             prediction[prediction <= 0.5] = 0
             prediction[prediction > 0.5] = 1
-            train_f1_score = f1_score(train_y.loc[train_idx], train_out.detach().cpu().numpy())
+            train_f1_score = f1_score(train_y.loc[train_idx], prediction)
 
             model.eval()
             with torch.no_grad():
