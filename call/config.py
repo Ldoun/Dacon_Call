@@ -5,7 +5,6 @@ def get_config():
 
     #default
     parser.add_argument("--raw_path", default= '../data')
-    parser.add_argument('--seed', default=42, type=int)
 
     #train
     parser.add_argument('--model', default='GCN')
