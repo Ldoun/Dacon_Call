@@ -24,14 +24,14 @@ if __name__ == "__main__":
     
     model = model(
         in_channels=train_x.shape[1], hidden_channels=args.hidden, num_layers=2, out_channels=1, dropout=args.drop_p
-    )
+    ).cuda()
     print(model)
 
     test_predictoins = []
     for fold_idx, (train_idx, valid_idx) in enumerate(skf.split(train_x, train_y)):
         model.reset_parameters()
-        train_graph = construct_graph(train_x.loc[train_idx, :])
-        valid_graph = construct_graph(train_x)
+        train_graph = construct_graph(train_x.loc[train_idx, :]).cuda()
+        valid_graph = construct_graph(train_x).cuda()
 
         # optimizer = torch.optim.Adam([
         #     dict(params=model.conv1.parameters(), weight_decay=5e-4),
@@ -43,8 +43,8 @@ if __name__ == "__main__":
         print(f"Using pos_weight of {pos_weight} for positive classs")
         loss_fn = torch.nn.BCEWithLogitsLoss(pos_weight=torch.FloatTensor(pos_weight))
         
-        train_tensor_x = torch.FloatTensor(train_x)
-        train_tensor_y = torch.FloatTensor(train_y)
+        train_tensor_x = torch.FloatTensor(train_x.values).cuda()
+        train_tensor_y = torch.FloatTensor(train_y.values).cuda()
         for epoch in range(1, args.epochs+1):
             model.train()
             train_out = model(train_tensor_x[train_idx], train_graph)
@@ -63,7 +63,7 @@ if __name__ == "__main__":
             print(f"{epoch}-epoch: t_loss {train_loss.item()} t_f1 {train_f1_score} v_loss {valid_loss.item()} v_f1 {valid_f1_score}")
 
         model.eval()
-        test_graph = construct_graph(all_x)
+        test_graph = construct_graph(all_x).cuda()
         with torch.no_grad():
-            test_predictoins.append(model(torch.FloatTensor(all_x), test_graph).detach().cpu().numpy())
+            test_predictoins.append(model(torch.FloatTensor(all_x).cuda(), test_graph).detach().cpu().numpy())
 
