@@ -12,7 +12,7 @@ def construct_graph(feature, device):
         _, top_similar_samples = similarity.topk(5)
         row = torch.tensor([index]*len(top_similar_samples), dtype=torch.long, device=device)
         temp = torch.stack([row, top_similar_samples],dim=1)
-        torch.concat([cordinate, temp], axis=1)
+        cordinate = torch.concat([cordinate, temp], dim=0)
 
     return cordinate.T
 
