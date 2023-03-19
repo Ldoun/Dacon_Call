@@ -34,8 +34,8 @@ def construct_graph(feature, device):
         cordinate = torch.concat([combinations(torch.tensor(node_list, device=device,dtype=torch.long), 2), cordinate], axis=0)
         print(f'상담전화건수 {condition} {target} -> edge added')
     
-    sparse_tensor = sparse_coo_tensor(cordinate.T, torch.ones(cordinate.shape[0], dtype=bool, device=device))
-    return sparse_tensor
+    #sparse_tensor = sparse_coo_tensor(cordinate.T, torch.ones(cordinate.shape[0], dtype=bool, device=device))
+    return cordinate.T
 
 def load_csv_data(path):
     train_csv = os.path.join(path, 'train.csv')
