@@ -32,8 +32,8 @@ if __name__ == "__main__":
     test_predictoins = []
     for fold_idx, (train_idx, valid_idx) in enumerate(skf.split(train_x, train_y)):
         model.reset_parameters()
-        train_graph = construct_graph(train_x.loc[train_idx, :], device)
-        valid_graph = construct_graph(train_x, device)
+        graph = construct_graph(train_x, device)
+        train_index = (graph[0,:] in train_idx & graph[1,:] in train_idx)
 
         # optimizer = torch.optim.Adam([
         #     dict(params=model.conv1.parameters(), weight_decay=5e-4),
@@ -49,7 +49,7 @@ if __name__ == "__main__":
         train_tensor_y = torch.tensor(train_y.values, dtype=torch.float, device=device).unsqueeze(-1)
         for epoch in range(1, args.epochs+1):
             model.train()
-            train_out = model(train_tensor_x[train_idx], train_graph)
+            train_out = model(train_tensor_x[train_idx], graph[train_index])
             train_loss = loss_fn(train_out, train_tensor_y[train_idx]) #compute loss for train set, graph(only with train node)
             optimizer.zero_grad()
             train_loss.backward()
@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
             model.eval()
             with torch.no_grad():
-                valid_out = model(train_tensor_x, valid_graph)
+                valid_out = model(train_tensor_x, graph)
                 valid_loss = loss_fn(valid_out[valid_idx], train_tensor_y[valid_idx]) #compute loss for valid set, graph(with train&valid node)
                 
                 prediction = valid_out.detach().cpu().numpy()
