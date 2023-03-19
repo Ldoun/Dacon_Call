@@ -24,11 +24,11 @@ def construct_graph(feature):
     graph = nx.Graph()
     for condition, target in [['same', 0], ['rage',[1,10]], ['over',10]]:
         node_list = get_condition_satisfied_idx(feature, '음성사서함이용', condition, target)
-        graph.add_edges_from(zip(*combinations_with_replacement(node_list, 2)))
+        graph.add_edges_from(combinations_with_replacement(node_list, 2))
     
     for condition, target in [['range', [0,1]], ['same',2], ['over',2]]:
         node_list = get_condition_satisfied_idx(feature, '상담전화건수', condition, target)
-        graph.add_edges_from(zip(*combinations_with_replacement(node_list, 2)))
+        graph.add_edges_from(combinations_with_replacement(node_list, 2))
     
     return from_networkx(graph)
 
