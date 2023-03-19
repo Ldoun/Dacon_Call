@@ -31,9 +31,10 @@ if __name__ == "__main__":
 
     test_predictoins = []
     for fold_idx, (train_idx, valid_idx) in enumerate(skf.split(train_x, train_y)):
+        tensor_train_idx = torch.tensor(train_idx)
         model.reset_parameters()
         graph = construct_graph(train_x, device)
-        train_index = (graph[0,:] in train_idx & graph[1,:] in train_idx)
+        train_index = (graph[0,:] in tensor_train_idx & graph[1,:] in tensor_train_idx)
 
         # optimizer = torch.optim.Adam([
         #     dict(params=model.conv1.parameters(), weight_decay=5e-4),
