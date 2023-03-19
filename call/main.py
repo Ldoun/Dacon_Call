@@ -33,8 +33,6 @@ if __name__ == "__main__":
     for fold_idx, (train_idx, valid_idx) in enumerate(skf.split(train_x, train_y)):
         tensor_train_idx = torch.tensor(train_idx)
         model.reset_parameters()
-        graph = construct_graph(train_x, device)
-        train_index = (torch.isin(graph[0,:], tensor_train_idx) & torch.isin(graph[1,:], tensor_train_idx))
 
         # optimizer = torch.optim.Adam([
         #     dict(params=model.conv1.parameters(), weight_decay=5e-4),
@@ -48,6 +46,10 @@ if __name__ == "__main__":
         
         train_tensor_x = torch.tensor(train_x.values, dtype=torch.float, device=device)
         train_tensor_y = torch.tensor(train_y.values, dtype=torch.float, device=device).unsqueeze(-1)
+        
+        graph = construct_graph(train_tensor_x, device)
+        train_index = (torch.isin(graph[0,:], tensor_train_idx) & torch.isin(graph[1,:], tensor_train_idx))
+        
         for epoch in range(1, args.epochs+1):
             model.train()
             train_out = model(train_tensor_x[train_idx], graph[train_index])

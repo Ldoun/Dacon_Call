@@ -11,7 +11,7 @@ def construct_graph(feature, device):
         similarity[index] = 0.
         _, top_similar_samples = similarity.topk(5)
         temp = torch.stack([torch.tensor([index]*len(top_similar_samples)), top_similar_samples],dim=1)
-        cordinate.concat([cordinate, temp], axis=1)
+        torch.concat([cordinate, temp], axis=1)
 
     return cordinate.T
 
