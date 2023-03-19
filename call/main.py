@@ -32,7 +32,6 @@ if __name__ == "__main__":
         model.reset_parameters()
         train_graph = construct_graph(train_x.loc[train_idx, :])
         valid_graph = construct_graph(train_x)
-        test_graph = construct_graph(all_x)
 
         # optimizer = torch.optim.Adam([
         #     dict(params=model.conv1.parameters(), weight_decay=5e-4),
@@ -62,6 +61,7 @@ if __name__ == "__main__":
             print(f"{epoch}-epoch: t_loss {train_loss.item()} t_f1 {train_f1_score} v_loss {valid_loss.item()} v_f1 {valid_f1_score}")
 
         model.eval()
+        test_graph = construct_graph(all_x)
         with torch.no_grad():
             test_predictoins.append(model(all_x, test_graph).detach().cpu().numpy())
 
