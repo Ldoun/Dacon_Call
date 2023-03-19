@@ -27,14 +27,15 @@ def construct_graph(feature, device):
     for target in range(1,max(feature['음성사서함이용'])):
         node_list = get_condition_satisfied_idx(feature, '음성사서함이용', 'range', [target-1, target+1])
         cordinate = torch.concat([combinations(torch.tensor(node_list, device=device,dtype=torch.long), 2), cordinate], axis=0)
-        print(f'음성사서함이용 range {target} -> edge added')
+        print(f'음성사서함이용 range {[target-1, target+1]} -> edge added')
     
     for target in range(1, max(feature['상담전화건수'])):
         node_list = get_condition_satisfied_idx(feature, '상담전화건수', 'range', [target-1, target+1])
         cordinate = torch.concat([combinations(torch.tensor(node_list, device=device,dtype=torch.long), 2), cordinate], axis=0)
-        print(f'상담전화건수 range {target} -> edge added')
+        print(f'상담전화건수 range {[target-1, target+1]} -> edge added')
     
     #sparse_tensor = sparse_coo_tensor(cordinate.T, torch.ones(cordinate.shape[0], dtype=bool, device=device))
+    print(f'added {cordinate.shape[1]} edges')
     return cordinate.T
 
 def load_csv_data(path):
