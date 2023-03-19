@@ -30,7 +30,7 @@ if __name__ == "__main__":
     test_predictoins = []
     for fold_idx, (train_idx, valid_idx) in enumerate(skf.split(train_x, train_y)):
         model.reset_parameters()
-        train_graph = construct_graph(train_x.loc[train_x, :])
+        train_graph = construct_graph(train_x.loc[train_idx, :])
         valid_graph = construct_graph(train_x)
         test_graph = construct_graph(all_x)
 
