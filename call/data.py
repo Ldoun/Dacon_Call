@@ -18,23 +18,23 @@ def get_condition_satisfied_idx(data, col_name, condition, target):
         raise "condition not satisfied"
 
 
-def construct_graph(feature):
+def construct_graph(feature, device):
     #construct graph by counselling calls & voice Mailbox Usage
     #counselling calls {0, more than 0, more than 10}
     #voice Mailbox Usage {0~1, 2, more than 2}
     
-    cordinate = torch.LongTensor()
+    cordinate = torch.LongTensor(device=device)
     for condition, target in [['same', 0], ['range',[1,10]], ['over',10]]:
         node_list = get_condition_satisfied_idx(feature, '음성사서함이용', condition, target)
-        cordinate = torch.concat([combinations(torch.LongTensor(node_list), 2), cordinate], axis=0)
+        cordinate = torch.concat([combinations(torch.LongTensor(node_list, device=device), 2), cordinate], axis=0)
         print(f'음성사서함이용 {condition} {target} -> edge added')
     
     for condition, target in [['range', [0,1]], ['same',2], ['over',2]]:
         node_list = get_condition_satisfied_idx(feature, '상담전화건수', condition, target)
-        cordinate = torch.concat([combinations(torch.LongTensor(node_list), 2), cordinate], axis=0)
+        cordinate = torch.concat([combinations(torch.LongTensor(node_list, device=device), 2), cordinate], axis=0)
         print(f'상담전화건수 {condition} {target} -> edge added')
     
-    sparse_tensor = sparse_coo_tensor(cordinate.T, torch.ones(cordinate.shape[0], dtype=bool))
+    sparse_tensor = sparse_coo_tensor(cordinate.T, torch.ones(cordinate.shape[0], dtype=bool, device=device))
     return sparse_tensor
 
 def load_csv_data(path):
