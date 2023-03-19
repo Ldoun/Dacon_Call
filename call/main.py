@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     test_predictoins = []
     for fold_idx, (train_idx, valid_idx) in enumerate(skf.split(train_x, train_y)):
-        tensor_train_idx = torch.tensor(train_idx)
+        tensor_train_idx = torch.tensor(train_idx, dtype=torch.long, device=device)
         model.reset_parameters()
 
         # optimizer = torch.optim.Adam([
