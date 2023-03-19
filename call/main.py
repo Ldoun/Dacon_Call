@@ -68,7 +68,7 @@ if __name__ == "__main__":
                 prediction = valid_out.detach().cpu().numpy()
                 prediction[prediction <= 0.5] = 0
                 prediction[prediction > 0.5] = 1
-                valid_f1_score = f1_score(train_y.loc[valid_idx], prediction)
+                valid_f1_score = f1_score(train_y.loc[valid_idx], prediction[valid_idx])
 
             
             print(f"{epoch}-epoch: t_loss {train_loss.item()} t_f1 {train_f1_score} v_loss {valid_loss.item()} v_f1 {valid_f1_score}")
