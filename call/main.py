@@ -54,13 +54,22 @@ if __name__ == "__main__":
             optimizer.zero_grad()
             train_loss.backward()
             optimizer.step()
+
+            prediction = train_out.detach().cpu().numpy()
+            prediction[prediction <= 0.5] = 0
+            prediction[prediction > 0.5] = 1
             train_f1_score = f1_score(train_y.loc[train_idx], train_out.detach().cpu().numpy())
 
             model.eval()
             with torch.no_grad():
                 valid_out = model(train_tensor_x, valid_graph)
                 valid_loss = loss_fn(valid_out[valid_idx], train_tensor_y[valid_idx]) #compute loss for valid set, graph(with train&valid node)
-                valid_f1_score = f1_score(train_y.loc[valid_idx], valid_out[valid_idx].detach().cpu().numpy())
+                
+                prediction = valid_out.detach().cpu().numpy()
+                prediction[prediction <= 0.5] = 0
+                prediction[prediction > 0.5] = 1
+                valid_f1_score = f1_score(train_y.loc[valid_idx], prediction)
+
             
             print(f"{epoch}-epoch: t_loss {train_loss.item()} t_f1 {train_f1_score} v_loss {valid_loss.item()} v_f1 {valid_f1_score}")
 
