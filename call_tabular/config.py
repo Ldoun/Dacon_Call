@@ -22,5 +22,6 @@ def get_config():
 
     #experiment
     parser.add_argument('--oversampling', action='store_true', default=False)
+    parser.add_argument('--weighted_loss', action='store_true', default=False)
 
     return parser.parse_args()
