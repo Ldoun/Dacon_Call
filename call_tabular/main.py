@@ -24,7 +24,7 @@ if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     model = model(
-        in_channels=train_x.shape[1], hidden_channels=args.hidden, num_layers=2, out_channels=1, dropout=args.drop_p
+        input_size=train_x.shape[1], hidden_size=args.hidden, output_size=1, drop_p=args.drop_p
     ).to(device)
     print(model)
 
