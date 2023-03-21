@@ -6,6 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 import torch
+from focal_loss.focal_loss import FocalLoss
 
 from trainer import Trainer
 from config import get_config
@@ -46,9 +47,7 @@ if __name__ == "__main__":
         
         optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
         if args.weighted_loss:
-            weight = [1 - (train_y[train_idx]==0).sum()/len(train_idx), 1 - (train_y[train_idx]==1).sum()/len(train_idx) ]
-            print(f"Using weight of {weight}")
-            loss_fn = torch.nn.BCELoss(weight=torch.tensor(weight, dtype=torch.float, device=device))
+            loss_fn = FocalLoss(gamma=0.7)
         else:
             loss_fn = torch.nn.BCELoss()
         
