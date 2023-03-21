@@ -24,7 +24,6 @@ class DNN(nn.Module):
 
         output_layer = nn.Sequential(
             nn.Linear(hidden_size, output_size),
-            nn.Sigmoid()
         )
         modules.append(output_layer)
 
