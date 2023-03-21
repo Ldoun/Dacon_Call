@@ -16,7 +16,7 @@ class Trainer():
         f1 = []
         self.model.train()
         for batch in self.train_loader:
-            prediction = f.sigmoid(self.model(batch['x']))
+            prediction = self.model(batch['x'])
             train_loss = self.loss_fn(prediction, batch['y']) #compute loss for train set, graph(only with train node)
             self.optimizer.zero_grad()
             train_loss.backward()
@@ -37,7 +37,7 @@ class Trainer():
         self.model.eval()
         with torch.no_grad():
             for batch in self.valid_loader:
-                prediction = f.sigmoid(self.model(batch['x']))
+                prediction = self.model(batch['x'])
                 valid_loss = self.loss_fn(prediction, batch['y'])
                 
                 prediction = prediction.detach().cpu().numpy()
