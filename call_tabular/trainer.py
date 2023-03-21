@@ -68,4 +68,4 @@ class Trainer():
             train_loss, train_f1, t_pos_acc, t_neg_acc = self.train_epoch()
             valid_loss, valid_f1, v_pos_acc, v_neg_acc = self.valid_epoch()
             
-            print(f"{epoch}-epoch: t_loss {train_loss} t_f1 {train_f1} t_pa {t_pos_acc} t_na {t_neg_acc} v_loss {valid_loss} v_f1 {valid_f1} v_pa {v_pos_acc} v_na {v_neg_acc}")
+            print(f"{str(epoch).zfill(3)}-epoch: t_loss {train_loss:.4f} t_f1 {train_f1:.4f} t_pa {t_pos_acc:.4f} t_na {t_neg_acc:.4f} v_loss {valid_loss:.4f} v_f1 {valid_f1:.4f} v_pa {v_pos_acc:.4f} v_na {v_neg_acc:.4f}")
