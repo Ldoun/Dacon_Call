@@ -21,7 +21,7 @@ class TabularDataset(Dataset):
     def __getitem__(self, idx):
         x = torch.tensor(self.data[idx], dtype=torch.float, device=self.device)
         if self.is_train:
-            y = torch.tensor(self.label[idx], dtype=torch.float, device=self.device).squeeze(-1)
+            y = torch.tensor(self.label[idx], dtype=torch.float, device=self.device).unsqueeze(-1)
             return {"x":x, "y":y}
         else:
             return x
