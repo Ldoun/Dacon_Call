@@ -2,6 +2,8 @@ import importlib
 import pandas as pd
 
 from sklearn.model_selection import StratifiedKFold
+from imblearn.over_sampling import RandomOverSampler
+
 
 import torch
 
@@ -33,7 +35,10 @@ if __name__ == "__main__":
         train_tensor_x = torch.tensor(train_x.values, dtype=torch.float, device=device)
         train_tensor_y = torch.tensor(train_y.values, dtype=torch.float, device=device).unsqueeze(-1)
 
-        train_loader = load_data_loader(args,train_tensor_x[train_idx], train_tensor_y[train_idx],is_train=True)
+        ros = RandomOverSampler()
+        oversampled_data, oversampled_label = ros.fit_resample(train_tensor_x[train_idx], train_tensor_y[train_idx])
+
+        train_loader = load_data_loader(args,oversampled_data, oversampled_label,is_train=True)
         valid_loader = load_data_loader(args,train_tensor_x[valid_idx], train_tensor_y[valid_idx],is_train=True)
         
         optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
