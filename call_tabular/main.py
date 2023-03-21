@@ -32,19 +32,21 @@ if __name__ == "__main__":
             input_size=train_x.shape[1], hidden_size=args.hidden, output_size=1, drop_p=args.drop_p
         ).to(device)
 
-        train_tensor_x = torch.tensor(train_x.values, dtype=torch.float, device=device)
-        train_tensor_y = torch.tensor(train_y.values, dtype=torch.float, device=device).unsqueeze(-1)
-
         ros = RandomOverSampler()
-        oversampled_data, oversampled_label = ros.fit_resample(train_tensor_x[train_idx], train_tensor_y[train_idx])
+        oversampled_data, oversampled_label = ros.fit_resample(train_x.loc[train_idx], train_y.loc[train_idx])
+        train_tensor_x = torch.tensor(oversampled_data.values, dtype=torch.float, device=device)
+        train_tensor_y = torch.tensor(oversampled_label.values, dtype=torch.float, device=device).unsqueeze(-1)
 
-        train_loader = load_data_loader(args,oversampled_data, oversampled_label,is_train=True)
-        valid_loader = load_data_loader(args,train_tensor_x[valid_idx], train_tensor_y[valid_idx],is_train=True)
+        valid_tensor_x = torch.tensor(train_x.loc[valid_idx].values, dtype=torch.float, device=device)
+        valid_tensor_y = torch.tensor(train_y.loc[valid_idx].values, dtype=torch.float, device=device).unsqueeze(-1)
+
+        train_loader = load_data_loader(args,train_tensor_x, train_tensor_y,is_train=True)
+        valid_loader = load_data_loader(args, valid_tensor_x, valid_tensor_y,is_train=True)
         
         optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
-        pos_weight = [(train_y.loc[train_idx]==0).sum()/train_y.loc[train_idx].sum()]
-        print(f"Using pos_weight of {pos_weight} for positive classs")
-        loss_fn = torch.nn.BCEWithLogitsLoss(pos_weight=torch.tensor(pos_weight, dtype=torch.float, device=device))
+        # pos_weight = [(train_y.loc[train_idx]==0).sum()/train_y.loc[train_idx].sum()]
+        # print(f"Using pos_weight of {pos_weight} for positive classs")
+        loss_fn = torch.nn.BCEWithLogitsLoss()# pos_weight=torch.tensor(pos_weight, dtype=torch.float, device=device))
         
         trainer = Trainer(args, train_loader, valid_loader, model, optimizer, loss_fn)
         trainer.train()
