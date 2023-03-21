@@ -22,7 +22,7 @@ class DNN(nn.Module):
                 )
             )
 
-        output_layer = nn.Linear(hidden_size, output_size),
+        output_layer = nn.Linear(hidden_size, output_size)
         modules.append(output_layer)
 
         self.model = nn.ModuleList(modules)
