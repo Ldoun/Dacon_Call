@@ -34,7 +34,7 @@ if __name__ == "__main__":
         print(model)
 
         train_loader = load_data_loader(
-            args=args, data=train_x.loc[train_idx].values, label=train_y.loc[train_idx].values, is_train=True,device=device,use_oversample=True)
+            args=args, data=train_x.loc[train_idx].values, label=train_y.loc[train_idx].values, is_train=True,device=device,use_oversample=args.oversampling)
         valid_loader = load_data_loader(
             args=args, data=train_x.loc[valid_idx].values, label=train_y.loc[valid_idx].values, is_train=True, device=device)
         

@@ -20,4 +20,7 @@ def get_config():
     parser.add_argument('--n_layer', default=3, type=int)
     parser.add_argument('--drop_p', default=0.5, type=float)
 
+    #experiment
+    parser.add_argument('--oversampling', action='store_true', default=False)
+
     return parser.parse_args()
