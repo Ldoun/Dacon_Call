@@ -46,4 +46,4 @@ class Trainer():
             train_loss, train_f1 = self.train_epoch()
             valid_loss, valid_f1 = self.valid_epoch()
             
-            print(f"{epoch}-epoch: t_loss {train_loss.item()} t_f1 {train_f1} v_loss {valid_loss.item()} v_f1 {valid_f1}")
+            print(f"{epoch}-epoch: t_loss {train_loss} t_f1 {train_f1} v_loss {valid_loss} v_f1 {valid_f1}")
