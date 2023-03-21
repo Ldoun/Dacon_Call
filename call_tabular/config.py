@@ -13,6 +13,7 @@ def get_config():
     parser.add_argument('--learning_rate',default=1e-2, type=float)
     parser.add_argument('--epochs', default=200, type=int)
     parser.add_argument('--weight_decay',default=5e-4, type=float)
+    parser.add_argument('--batch_size', default=64, type=int)
 
     #model
     parser.add_argument('--hidden', default=16, type=int)
