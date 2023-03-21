@@ -23,14 +23,14 @@ if __name__ == "__main__":
     skf = StratifiedKFold(n_splits=args.n_fold, random_state=args.seed, shuffle=True)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    model = model(
-        input_size=train_x.shape[1], hidden_size=args.hidden, output_size=1, drop_p=args.drop_p
-    ).to(device)
-    print(model)
-
     test_predictoins = []
     for fold_idx, (train_idx, valid_idx) in enumerate(skf.split(train_x, train_y)):
-        model.reset_parameters()        
+        print(f'---------{fold_idx}-fold-------------')
+        model = model(
+            input_size=train_x.shape[1], hidden_size=args.hidden, output_size=1, drop_p=args.drop_p
+        ).to(device)
+        print(model)   
+
         train_tensor_x = torch.tensor(train_x.values, dtype=torch.float, device=device)
         train_tensor_y = torch.tensor(train_y.values, dtype=torch.float, device=device).unsqueeze(-1)
 

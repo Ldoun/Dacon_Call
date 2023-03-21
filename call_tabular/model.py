@@ -12,6 +12,6 @@ class DNN(nn.Module):
             nn.Dropout(drop_p),
             nn.Linear(hidden_size, output_size),
         )
-        
+
     def forward(self, x):
         return self.model(x)
