@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     seed_everything(args.seed)
     model_module = importlib.import_module("model")
-    model = getattr(model_module, args.model)
+    model_module = getattr(model_module, args.model)
 
     train_x, train_y, test_x = load_csv_data(args.raw_path)
 
@@ -28,20 +28,15 @@ if __name__ == "__main__":
     test_predictoins = []
     for fold_idx, (train_idx, valid_idx) in enumerate(skf.split(train_x, train_y)):
         print(f'---------{fold_idx}-fold-------------')
-        model = model(
+        model = model_module(
             input_size=train_x.shape[1], hidden_size=args.hidden, output_size=1, drop_p=args.drop_p
         ).to(device)
+        print(model)
 
-        ros = RandomOverSampler()
-        oversampled_data, oversampled_label = ros.fit_resample(train_x.loc[train_idx], train_y.loc[train_idx])
-        train_tensor_x = torch.tensor(oversampled_data.values, dtype=torch.float, device=device)
-        train_tensor_y = torch.tensor(oversampled_label.values, dtype=torch.float, device=device).unsqueeze(-1)
-
-        valid_tensor_x = torch.tensor(train_x.loc[valid_idx].values, dtype=torch.float, device=device)
-        valid_tensor_y = torch.tensor(train_y.loc[valid_idx].values, dtype=torch.float, device=device).unsqueeze(-1)
-
-        train_loader = load_data_loader(args,train_tensor_x, train_tensor_y,is_train=True)
-        valid_loader = load_data_loader(args, valid_tensor_x, valid_tensor_y,is_train=True)
+        train_loader = load_data_loader(
+            args=args, data=train_x.loc[train_idx].values, label=train_y.loc[train_idx].values, is_train=True,device=device,use_oversample=True)
+        valid_loader = load_data_loader(
+            args=args, data=train_x.loc[valid_idx].values, label=train_y.loc[valid_idx].values, is_train=True, device=device)
         
         optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
         # pos_weight = [(train_y.loc[train_idx]==0).sum()/train_y.loc[train_idx].sum()]
