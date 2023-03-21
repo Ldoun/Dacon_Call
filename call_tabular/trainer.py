@@ -1,6 +1,5 @@
 import torch
 from sklearn.metrics import f1_score
-import torch.nn.functional as f
 
 class Trainer():
     def __init__(self, args, train_loader, valid_loader, model, optimizer, loss_fn,):
@@ -24,7 +23,7 @@ class Trainer():
             train_loss.backward()
             self.optimizer.step()
 
-            prediction = f.sigmoid(prediction).detach().cpu().numpy()
+            prediction = torch.sigmoid(prediction).detach().cpu().numpy()
             prediction[prediction <= 0.5] = 0
             prediction[prediction > 0.5] = 1
 
@@ -49,7 +48,7 @@ class Trainer():
                 prediction = self.model(batch['x'])
                 valid_loss = self.loss_fn(prediction, batch['y'])
                 
-                prediction = f.sigmoid(prediction).detach().cpu().numpy()
+                prediction = torch.sigmoid(prediction).detach().cpu().numpy()
                 prediction[prediction <= 0.5] = 0
                 prediction[prediction > 0.5] = 1
 
