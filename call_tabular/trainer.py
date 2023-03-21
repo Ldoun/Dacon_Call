@@ -1,7 +1,6 @@
 import torch
 from sklearn.metrics import f1_score
 
-
 class Trainer():
     def __init__(self, args, train_loader, valid_loader, model, optimizer, loss_fn,):
         self.args = args
@@ -12,6 +11,8 @@ class Trainer():
         self.loss_fn = loss_fn
     
     def train_epoch(self):
+        loss = []
+        f1 = []
         self.model.train()
         for batch in self.train_loader:
             prediction = self.model(batch['x'])
@@ -24,10 +25,14 @@ class Trainer():
             prediction[prediction <= 0.5] = 0
             prediction[prediction > 0.5] = 1
             train_f1_score = f1_score(batch['y'].detach().cpu().numpy(), prediction)
+            loss.append(train_loss.item())
+            f1.append(train_f1_score)
 
-        return train_loss.item(), train_f1_score
+        return sum(loss)/len(loss), sum(f1)/len(f1)
 
     def valid_epoch(self):
+        loss = []
+        f1 = []
         self.model.eval()
         with torch.no_grad():
             for batch in self.valid_loader:
@@ -38,8 +43,10 @@ class Trainer():
                 prediction[prediction <= 0.5] = 0
                 prediction[prediction > 0.5] = 1
                 valid_f1_score = f1_score(batch['y'].detach().cpu().numpy(), prediction)
+                loss.append(valid_loss.item())
+                f1.append(valid_f1_score)
 
-        return valid_loss.item(), valid_f1_score
+        return sum(loss)/len(loss), sum(f1)/len(f1)
                     
     def train(self):
         for epoch in range(1,self.args.epochs+1):

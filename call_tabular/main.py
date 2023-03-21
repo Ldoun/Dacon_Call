@@ -29,7 +29,6 @@ if __name__ == "__main__":
         model = model(
             input_size=train_x.shape[1], hidden_size=args.hidden, output_size=1, drop_p=args.drop_p
         ).to(device)
-        print(model)   
 
         train_tensor_x = torch.tensor(train_x.values, dtype=torch.float, device=device)
         train_tensor_y = torch.tensor(train_y.values, dtype=torch.float, device=device).unsqueeze(-1)
