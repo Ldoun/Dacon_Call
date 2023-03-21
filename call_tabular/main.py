@@ -2,7 +2,7 @@ import importlib
 import pandas as pd
 
 from sklearn.model_selection import StratifiedKFold
-from imblearn.over_sampling import RandomOverSampler
+from sklearn.preprocessing import MinMaxScaler
 
 
 import torch
@@ -21,6 +21,12 @@ if __name__ == "__main__":
     model_module = getattr(model_module, args.model)
 
     train_x, train_y, test_x = load_csv_data(args.raw_path)
+    scaler = MinMaxScaler()
+    scaler.fit(train_x.values)
+    
+    train_x = scaler.transform(train_x.values)
+    test_x = scaler.transform(test_x.values)
+    train_y = train_y.values
 
     skf = StratifiedKFold(n_splits=args.n_fold, random_state=args.seed, shuffle=True)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -34,13 +40,13 @@ if __name__ == "__main__":
         print(model)
 
         train_loader = load_data_loader(
-            args=args, data=train_x.loc[train_idx].values, label=train_y.loc[train_idx].values, is_train=True,device=device,use_oversample=args.oversampling)
+            args=args, data=train_x[train_idx], label=train_y[train_idx], is_train=True,device=device,use_oversample=args.oversampling)
         valid_loader = load_data_loader(
-            args=args, data=train_x.loc[valid_idx].values, label=train_y.loc[valid_idx].values, is_train=True, device=device)
+            args=args, data=train_x[valid_idx], label=train_y[valid_idx], is_train=True, device=device)
         
         optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
         if args.weighted_loss:
-            weight = [1 - (train_y.loc[train_idx]==0).sum()/len(train_idx), 1 - (train_y.loc[train_idx]==1).sum()/len(train_idx) ]
+            weight = [1 - (train_y[train_idx]==0).sum()/len(train_idx), 1 - (train_y[train_idx]==1).sum()/len(train_idx) ]
             print(f"Using weight of {weight}")
             loss_fn = torch.nn.BCELoss(weight=torch.tensor(weight, dtype=torch.float, device=device))
         else:
