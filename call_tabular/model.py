@@ -24,8 +24,10 @@ class DNN(nn.Module):
 
         output_layer = nn.Linear(hidden_size, output_size),
         modules.append(output_layer)
-        
-        self.model = nn.Sequential(*modules)
+
+        self.model = nn.ModuleList(modules)
 
     def forward(self, x):
-        return self.model(x)
+        for layer in self.model:
+            x = layer(x)
+        return x
