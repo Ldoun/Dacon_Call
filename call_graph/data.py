@@ -3,6 +3,26 @@ import pandas as pd
 
 import torch
 import torch.nn.functional as f
+from torch_geometric.data import Data
+from torch_geometric.loader import NeighborLoader
+
+
+
+def get_dataloader(features, edge_index, num_neighbors, batch_size):
+    data = Data(
+        x = features,
+        edge_index = edge_index,
+    )
+
+    loader = NeighborLoader(
+        data = data,
+        num_neighbors = num_neighbors, #[30] * 2 need to be bigger?
+        batch_size = batch_size,
+        shuffle=True,
+        directed = False,
+    )
+
+    return loader
 
 def construct_graph(feature, device):
     cordinate = torch.tensor([], dtype=torch.long, device=device)

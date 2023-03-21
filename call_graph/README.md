@@ -8,3 +8,4 @@ DL
 
     - GNN: 적용예정(GCN해보고 GraphSage 해보기)
     - test set이 활용불가라 inductive setting으로 학습 필요
+    - test set까지 포함한 전체 그래프 생성 후 -> Masking 방식으로
