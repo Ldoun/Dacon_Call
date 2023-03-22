@@ -21,8 +21,7 @@ class Trainer():
         neg_acc = []
         self.model.train()
         for batch in self.train_loader:
-            x = torch.tensor(batch['x'], dtype=torch.float, device=self.device)
-            y = torch.tensor(batch['y'], dtype=torch.float, device=self.device).unsqueeze(-1)
+            x,y = batch['x'].to(self.device), batch['y'].to(self.device).unsqueeze(-1)
 
             prediction = self.model(x)
             train_loss = self.loss_fn(prediction, y) #compute loss for train set, graph(only with train node)
@@ -51,8 +50,7 @@ class Trainer():
         self.model.eval()
         with torch.no_grad():
             for batch in self.valid_loader:
-                x = torch.tensor(batch['x'], dtype=torch.float, device=self.device)
-                y = torch.tensor(batch['y'], dtype=torch.float, device=self.device).unsqueeze(-1)
+                x,y = batch['x'].to(self.device), batch['y'].to(self.device).unsqueeze(-1)
 
                 prediction = self.model(x)
                 valid_loss = self.loss_fn(prediction, y)
@@ -95,7 +93,7 @@ class Trainer():
         test_prediction = []
         with torch.no_grad():
             for batch in loader:
-                x = torch.tensor(batch, dtype=torch.float, device=self.device)
+                x = batch.to(self.device)
                 prediction = self.model(x)
 
                 prediction = torch.sigmoid(prediction).detach().cpu().numpy()
