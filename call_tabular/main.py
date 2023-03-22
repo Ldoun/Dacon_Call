@@ -74,4 +74,5 @@ if __name__ == "__main__":
         test_prediction.to_csv('test_prediction.csv', index=False)
 
     test_prediction['mean'] = np.mean(test_prediction.values, axis=1)
+    test_prediction.to_csv('test_prediction.csv', index=False)
     
