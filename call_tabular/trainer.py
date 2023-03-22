@@ -78,7 +78,8 @@ class Trainer():
             if best_f1 < valid_f1:
                 self.best_epoch = epoch
                 best_f1 = valid_f1
-
+        
+        print(f'valid best_epoch : {self.best_epoch} f1 : {best_f1}')
         self.model.load_state_dict(torch.load(os.path.join(self.model_path, f'{self.best_epoch}.pt')))
             
     def test(self, loader):
@@ -87,7 +88,7 @@ class Trainer():
         test_prediction = []
         with torch.no_grad():
             for batch in loader:
-                prediction = self.model(batch['x'])
+                prediction = self.model(batch)
 
                 prediction = torch.sigmoid(prediction).detach().cpu().numpy()
                 prediction[prediction <= 0.5] = 0
