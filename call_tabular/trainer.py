@@ -91,9 +91,6 @@ class Trainer():
                 prediction = self.model(batch)
 
                 prediction = torch.sigmoid(prediction).detach().cpu().numpy()
-                prediction[prediction <= 0.5] = 0
-                prediction[prediction > 0.5] = 1
-                
                 test_prediction.extend(list(prediction.squeeze(-1)))
         
         return test_prediction
