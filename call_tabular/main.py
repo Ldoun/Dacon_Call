@@ -1,4 +1,6 @@
+import os
 import importlib
+import numpy as np
 import pandas as pd
 
 from sklearn.model_selection import StratifiedKFold
@@ -27,6 +29,14 @@ if __name__ == "__main__":
     train_x = scaler.transform(train_x.values)
     test_x = scaler.transform(test_x.values)
     train_y = train_y.values
+
+    if args.stacking_file is not None:
+        print(f'train_x shape: {train_x.shape}')
+        train_prediction = pd.read_csv(os.path.join(args.raw_path, args.stacking_file+'train.csv'))
+        test_prediction = pd.read_csv(os.path.join(args.raw_path, args.stacking_file+'test.csv'))
+        train_x = np.concatenate([train_x,train_prediction.values],axis=1)
+        test_x = np.concatenate([test_x,test_prediction.values],axis=1)
+        print(f'stacking train_x shape: {train_x.shape}')
 
     skf = StratifiedKFold(n_splits=args.n_fold, random_state=args.seed, shuffle=True)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
