@@ -22,9 +22,9 @@ if __name__ == "__main__":
     model_module = importlib.import_module("model")
     model_module = getattr(model_module, args.model)
 
-    model_path = os.path.join('model_file', len(os.listdir('./model_file')))
+    model_path = os.path.join('model_file', str(len(os.listdir('./model_file'))))
     os.makedirs(model_path, exist_ok=True)
-    print(f'using {model_path}')
+    print(f'saving model to {model_path}')
 
     train_x, train_y, test_x = load_csv_data(args.raw_path)
     scaler = MinMaxScaler()
