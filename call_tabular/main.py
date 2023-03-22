@@ -45,7 +45,6 @@ if __name__ == "__main__":
     skf = StratifiedKFold(n_splits=args.n_fold, random_state=args.seed, shuffle=True)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    test_predictoins = []
     test_prediction = pd.DataFrame()
     for fold_idx, (train_idx, valid_idx) in enumerate(skf.split(train_x, train_y)):
         print(f'---------{fold_idx}-fold-------------')
@@ -71,7 +70,8 @@ if __name__ == "__main__":
         trainer.train()
 
         test_loader = load_data_loader(args=args, data=test_x, is_train=False, device=device)
-        test_prediction[f'{fold_idx}-fold'] = trainer.test(test_loader)
+        test_prediction[f'{fold_idx}-fold'] = pd.Series(trainer.test(test_loader))
         test_prediction.to_csv('test_prediction.csv', index=False)
 
+    test_prediction['mean'] = np.mean(test_prediction.values, axis=1)
     

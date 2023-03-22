@@ -94,6 +94,6 @@ class Trainer():
                 prediction[prediction <= 0.5] = 0
                 prediction[prediction > 0.5] = 1
                 
-                test_prediction.extend(list(prediction))
+                test_prediction.extend(list(prediction.squeeze(-1)))
         
         return test_prediction
