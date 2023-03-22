@@ -22,6 +22,10 @@ if __name__ == "__main__":
     model_module = importlib.import_module("model")
     model_module = getattr(model_module, args.model)
 
+    model_path = os.path.join('model_file', len(os.listdir('./model_file')))
+    os.makedirs(model_path, exist_ok=True)
+    print(f'using {model_path}')
+
     train_x, train_y, test_x = load_csv_data(args.raw_path)
     scaler = MinMaxScaler()
     scaler.fit(train_x.values)
@@ -42,6 +46,7 @@ if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     test_predictoins = []
+    test_prediction = pd.DataFrame()
     for fold_idx, (train_idx, valid_idx) in enumerate(skf.split(train_x, train_y)):
         print(f'---------{fold_idx}-fold-------------')
         model = model_module(
@@ -62,9 +67,11 @@ if __name__ == "__main__":
         else:
             loss_fn = torch.nn.BCEWithLogitsLoss()
         
-        trainer = Trainer(args, train_loader, valid_loader, model, optimizer, loss_fn)
+        trainer = Trainer(args, train_loader, valid_loader, model, optimizer, loss_fn, model_path)
         trainer.train()
 
-        ####Testing####
+        test_loader = load_data_loader(args=args, data=test_x, is_train=False, device=device)
+        test_prediction[f'{fold_idx}-fold'] = trainer.test(test_loader)
+        test_prediction.to_csv('test_prediction.csv', index=False)
 
     
