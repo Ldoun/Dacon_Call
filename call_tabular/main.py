@@ -57,7 +57,9 @@ if __name__ == "__main__":
         model = model_module(
             input_size=train_x.shape[1], hidden_size=args.hidden, output_size=1, n_layer=args.n_layer, drop_p=args.drop_p
         ).to(device)
-        print(model)
+        
+        if fold_idx == 0:
+            print(model)
 
         train_loader = load_data_loader(
             args=args, data=train_x[train_idx], label=train_y[train_idx], is_train=True,device=device,use_oversample=args.oversampling)
