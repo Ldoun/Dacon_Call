@@ -11,7 +11,7 @@ class TabularDataset(Dataset):
         self.is_train = is_train
 
         if self.is_train:
-            self.label = torch.tensor(label, dtype=torch.float).unsqueeze(-1)
+            self.label = torch.tensor(label, dtype=torch.float)
         if use_oversample:
             ros = RandomOverSampler()
             self.data, self.label = ros.fit_resample(data, label)
