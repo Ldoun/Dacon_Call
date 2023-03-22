@@ -81,6 +81,8 @@ class Trainer():
         
         print(f'valid best_epoch : {self.best_epoch} f1 : {best_f1}')
         self.model.load_state_dict(torch.load(os.path.join(self.model_path, f'{self.best_epoch}.pt')))
+
+        return best_f1
             
     def test(self, loader):
         self.model.load_state_dict(torch.load(os.path.join(self.model_path, f'{self.best_epoch}.pt')))

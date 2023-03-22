@@ -50,6 +50,8 @@ if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     test_prediction = pd.DataFrame()
+    validation_f1 = []
+
     for fold_idx, (train_idx, valid_idx) in enumerate(skf.split(train_x, train_y)):
         print(f'---------{fold_idx}-fold-------------')
         model = model_module(
@@ -71,7 +73,7 @@ if __name__ == "__main__":
             loss_fn = torch.nn.BCEWithLogitsLoss()
         
         trainer = Trainer(args, train_loader, valid_loader, model, optimizer, loss_fn, model_path)
-        trainer.train()
+        validation_f1.append(trainer.train())
 
         test_loader = load_data_loader(args=args, data=test_x, is_train=False, device=device)
         test_prediction[f'{fold_idx}-fold'] = pd.Series(trainer.test(test_loader))
@@ -79,4 +81,6 @@ if __name__ == "__main__":
 
     test_prediction['mean'] = np.mean(test_prediction.values, axis=1)
     test_prediction.to_csv(test_file, index=False)
+
+    print(f'{args.n_fold}-fold f1 mean : {np.mean(validation_f1)} std : {np.std(validation_f1)}')
     
