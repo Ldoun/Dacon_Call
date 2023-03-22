@@ -6,38 +6,27 @@ from torch.utils.data import Dataset, DataLoader
 from imblearn.over_sampling import RandomOverSampler
 
 class TabularDataset(Dataset):
-    def __init__(self,data,label,is_train, use_oversample, device) -> None:
+    def __init__(self,data,label,is_train, use_oversample) -> None:
         self.data = data
+        self.label = label
         self.is_train = is_train
-
-        if is_train:
-            self.label = label
-
         if use_oversample:
             ros = RandomOverSampler()
             self.data, self.label = ros.fit_resample(data, label)
         
-        
-
     def __len__(self):
         return len(self.data)
     
     def __getitem__(self, idx):
-        x = self.data[idx]
         if self.is_train:
-            y = self.label[idx]
-            return {"x":x, "y":y}
+            return {"x":self.data[idx], "y":self.label[idx]}
         else:
-            return x
+            return self.data[idx]
     
 
-def load_data_loader(args, data, device, label=None,is_train=False,use_oversample=False):
-    data = torch.tensor(data, dtype=torch.float, device=device)
-    if is_train:
-        label = torch.tensor(label, dtype=torch.float, device=device).unsqueeze(-1)
-
-    dataset = TabularDataset(data, label, is_train, use_oversample=use_oversample, device=device)
-    dataloader = DataLoader(dataset, args.batch_size, shuffle=is_train, pin_memory=is_train, num_workers=2)
+def load_data_loader(args, data, label=None,is_train=False,use_oversample=False):
+    dataset = TabularDataset(data, label, is_train, use_oversample=use_oversample)
+    dataloader = DataLoader(dataset, args.batch_size, shuffle=is_train, pin_memory=is_train)
     return dataloader
 
 def load_csv_data(path):

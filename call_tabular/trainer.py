@@ -4,13 +4,14 @@ import numpy as np
 from sklearn.metrics import f1_score
 
 class Trainer():
-    def __init__(self, args, train_loader, valid_loader, model, optimizer, loss_fn, model_path):
+    def __init__(self, args, train_loader, valid_loader, model, optimizer, loss_fn, device, model_path):
         self.args = args
         self.train_loader = train_loader
         self.valid_loader = valid_loader
         self.model = model
         self.optimizer = optimizer
         self.loss_fn = loss_fn
+        self.device = device
         self.model_path = model_path
 
     def train_epoch(self):
@@ -20,8 +21,11 @@ class Trainer():
         neg_acc = []
         self.model.train()
         for batch in self.train_loader:
-            prediction = self.model(batch['x'])
-            train_loss = self.loss_fn(prediction, batch['y']) #compute loss for train set, graph(only with train node)
+            x = torch.tensor(batch['x'], dtype=torch.float, device=self.device)
+            y = torch.tensor(batch['y'], dtype=torch.float, device=self.device).unsqueeze(-1)
+
+            prediction = self.model(x)
+            train_loss = self.loss_fn(prediction, y) #compute loss for train set, graph(only with train node)
             self.optimizer.zero_grad()
             train_loss.backward()
             self.optimizer.step()
@@ -30,13 +34,12 @@ class Trainer():
             prediction[prediction <= 0.5] = 0
             prediction[prediction > 0.5] = 1
 
-            label = batch['y'].detach().cpu().numpy()
-            train_f1_score = f1_score(label, prediction)
+            train_f1_score = f1_score(batch['y'], prediction)
             loss.append(train_loss.item())
             f1.append(train_f1_score)
             
-            pos_acc.append(sum(prediction[label==1] == 1) / len(label==1))
-            neg_acc.append(sum(prediction[label==0] == 0) / len(label==0))
+            pos_acc.append(sum(prediction[batch['y']==1] == 1) / len(batch['y']==1))
+            neg_acc.append(sum(prediction[batch['y']==0] == 0) / len(batch['y']==0))
 
         return sum(loss)/len(loss), sum(f1)/len(f1), sum(pos_acc)/len(pos_acc), sum(neg_acc)/len(neg_acc)
 
@@ -48,20 +51,22 @@ class Trainer():
         self.model.eval()
         with torch.no_grad():
             for batch in self.valid_loader:
-                prediction = self.model(batch['x'])
-                valid_loss = self.loss_fn(prediction, batch['y'])
+                x = torch.tensor(batch['x'], dtype=torch.float, device=self.device)
+                y = torch.tensor(batch['y'], dtype=torch.float, device=self.device).unsqueeze(-1)
+
+                prediction = self.model(x)
+                valid_loss = self.loss_fn(prediction, y)
                 
                 prediction = torch.sigmoid(prediction).detach().cpu().numpy()
                 prediction[prediction <= 0.5] = 0
                 prediction[prediction > 0.5] = 1
 
-                label = batch['y'].detach().cpu().numpy()
-                valid_f1_score = f1_score(label, prediction)
+                valid_f1_score = f1_score(batch['y'], prediction)
                 loss.append(valid_loss.item())
                 f1.append(valid_f1_score)
 
-                pos_acc.append(sum(prediction[label==1] == 1) / len(label==1))
-                neg_acc.append(sum(prediction[label==0] == 0) / len(label==0))
+                pos_acc.append(sum(prediction[batch['y']==1] == 1) / len(batch['y']==1))
+                neg_acc.append(sum(prediction[batch['y']==0] == 0) / len(batch['y']==0))
 
         return sum(loss)/len(loss), sum(f1)/len(f1), sum(pos_acc)/len(pos_acc), sum(neg_acc)/len(neg_acc)
                     
@@ -90,7 +95,8 @@ class Trainer():
         test_prediction = []
         with torch.no_grad():
             for batch in loader:
-                prediction = self.model(batch)
+                x = torch.tensor(batch, dtype=torch.float, device=self.device)
+                prediction = self.model(x)
 
                 prediction = torch.sigmoid(prediction).detach().cpu().numpy()
                 test_prediction.extend(list(prediction.squeeze(-1)))

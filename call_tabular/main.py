@@ -62,9 +62,9 @@ if __name__ == "__main__":
             print(model)
 
         train_loader = load_data_loader(
-            args=args, data=train_x[train_idx], label=train_y[train_idx], is_train=True,device=device,use_oversample=args.oversampling)
+            args=args, data=train_x[train_idx], label=train_y[train_idx], is_train=True, use_oversample=args.oversampling)
         valid_loader = load_data_loader(
-            args=args, data=train_x[valid_idx], label=train_y[valid_idx], is_train=True, device=device)
+            args=args, data=train_x[valid_idx], label=train_y[valid_idx], is_train=True)
         
         optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
         if args.weighted_loss:
@@ -74,10 +74,10 @@ if __name__ == "__main__":
         else:
             loss_fn = torch.nn.BCEWithLogitsLoss()
         
-        trainer = Trainer(args, train_loader, valid_loader, model, optimizer, loss_fn, model_path)
+        trainer = Trainer(args, train_loader, valid_loader, model, optimizer, loss_fn, device, model_path)
         validation_f1.append(trainer.train())
 
-        test_loader = load_data_loader(args=args, data=test_x, is_train=False, device=device)
+        test_loader = load_data_loader(args=args, data=test_x, is_train=False)
         test_prediction[f'{fold_idx}-fold'] = pd.Series(trainer.test(test_loader))
         test_prediction.to_csv(test_file, index=False)
 
