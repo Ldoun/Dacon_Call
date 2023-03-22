@@ -28,7 +28,7 @@ class TabularDataset(Dataset):
 
 def load_data_loader(args, data, label=None,is_train=False,use_oversample=False):
     dataset = TabularDataset(data, label, is_train, use_oversample=use_oversample)
-    dataloader = DataLoader(dataset, args.batch_size, shuffle=is_train, pin_memory=is_train)
+    dataloader = DataLoader(dataset, args.batch_size, shuffle=is_train, pin_memory=is_train, num_workers=2)
     return dataloader
 
 def load_csv_data(path):
