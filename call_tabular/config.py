@@ -4,7 +4,7 @@ def get_config():
     parser = argparse.ArgumentParser()
 
     #default
-    parser.add_argument("--raw_path", default= '../data')
+    parser.add_argument("--raw_path", default= '../../data')
 
     #train
     parser.add_argument('--seed', default=42, type=int)
@@ -12,7 +12,7 @@ def get_config():
     parser.add_argument('--learning_rate',default=1e-2, type=float)
     parser.add_argument('--epochs', default=200, type=int)
     parser.add_argument('--weight_decay',default=5e-4, type=float)
-    parser.add_argument('--batch_size', default=64, type=int)
+    parser.add_argument('--batch_size', default=10000, type=int)
 
     #model
     parser.add_argument('--model', default='DNN')
