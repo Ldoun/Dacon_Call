@@ -7,16 +7,15 @@ from imblearn.over_sampling import RandomOverSampler
 
 class TabularDataset(Dataset):
     def __init__(self,data,label,is_train, use_oversample, device) -> None:
-        self.data = torch.tensor(data, dtype=torch.float, device=self.device)
+        self.data = torch.tensor(data, dtype=torch.float, device=device)
         self.is_train = is_train
-        self.device = device
 
         if use_oversample:
             ros = RandomOverSampler()
             self.data, self.label = ros.fit_resample(data, label)
         
         if is_train:
-            self.label = torch.tensor(label, dtype=torch.float, device=self.device).unsqueeze(-1)
+            self.label = torch.tensor(label, dtype=torch.float, device=device).unsqueeze(-1)
 
     def __len__(self):
         return len(self.data)
