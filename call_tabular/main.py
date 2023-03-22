@@ -22,9 +22,13 @@ if __name__ == "__main__":
     model_module = importlib.import_module("model")
     model_module = getattr(model_module, args.model)
 
-    model_path = os.path.join('model_file', str(len(os.listdir('./model_file'))))
+    trial = str(len(os.listdir('./model_file')))
+    model_path = os.path.join('model_file', trial)
+
     os.makedirs(model_path, exist_ok=True)
     print(f'saving model to {model_path}')
+    test_file = f'{trial}.csv'
+    print(f'saving test result to {test_file}')
 
     train_x, train_y, test_x = load_csv_data(args.raw_path)
     scaler = MinMaxScaler()
@@ -71,8 +75,8 @@ if __name__ == "__main__":
 
         test_loader = load_data_loader(args=args, data=test_x, is_train=False, device=device)
         test_prediction[f'{fold_idx}-fold'] = pd.Series(trainer.test(test_loader))
-        test_prediction.to_csv('test_prediction.csv', index=False)
+        test_prediction.to_csv(test_file, index=False)
 
     test_prediction['mean'] = np.mean(test_prediction.values, axis=1)
-    test_prediction.to_csv('test_prediction.csv', index=False)
+    test_prediction.to_csv(test_file, index=False)
     
