@@ -40,7 +40,7 @@ class Trainer():
             pos_acc.append(sum(prediction[batch['y']==1] == 1) / len(batch['y']==1))
             neg_acc.append(sum(prediction[batch['y']==0] == 0) / len(batch['y']==0))
 
-        return sum(loss)/len(loss), sum(f1)/len(f1), sum(pos_acc)/len(pos_acc), sum(neg_acc)/len(neg_acc)
+        return sum(loss)/len(loss), sum(f1)/len(f1), float(sum(pos_acc)/len(pos_acc)), float(sum(neg_acc)/len(neg_acc))
 
     def valid_epoch(self):
         loss = []
@@ -66,7 +66,7 @@ class Trainer():
                 pos_acc.append(sum(prediction[batch['y']==1] == 1) / len(batch['y']==1))
                 neg_acc.append(sum(prediction[batch['y']==0] == 0) / len(batch['y']==0))
 
-        return sum(loss)/len(loss), sum(f1)/len(f1), sum(pos_acc)/len(pos_acc), sum(neg_acc)/len(neg_acc)
+        return sum(loss)/len(loss), sum(f1)/len(f1), float(sum(pos_acc)/len(pos_acc)), float(sum(neg_acc)/len(neg_acc))
                     
     def train(self):
         self.best_epoch = None
