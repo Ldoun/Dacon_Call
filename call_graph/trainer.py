@@ -21,7 +21,7 @@ class Trainer():
         neg_acc = []
         self.model.train()
         for batch in self.train_loader:
-            y = batch.y[:batch.batch_size].unsqueeze(-1)
+            y = batch.y[:batch.batch_size]
             x, edge_index, y = batch.x.to(self.device), batch.edge_index.to(self.device), y.to(self.device)
 
             prediction = self.model(x, edge_index)[:batch.batch_size]
@@ -51,7 +51,7 @@ class Trainer():
         self.model.eval()
         with torch.no_grad():
             for batch in self.valid_loader:
-                y = batch.y[:batch.batch_size].unsqueeze(-1)
+                y = batch.y[:batch.batch_size]
                 x, edge_index, y = batch.x.to(self.device), batch.edge_index.to(self.device), y.to(self.device)
 
                 prediction = self.model(x, edge_index)[:batch.batch_size]
