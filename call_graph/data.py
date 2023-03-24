@@ -44,7 +44,7 @@ def construct_graph(feature, device):
 
 def get_dataloader(features, edge_index, mask, num_neighbors, batch_size, label=None, shuffle=False):
     if label is not None:
-        print_variable({'x' : features, 'edge' : edge_index, label:label})
+        print_variable({'x' : features, 'edge' : edge_index, 'label':label})
     else:
         print_variable({'x' : features, 'edge' : edge_index})
 
