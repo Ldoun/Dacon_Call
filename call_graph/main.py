@@ -64,7 +64,7 @@ if __name__ == "__main__":
         if fold_idx == 0:
             print(model)
 
-        train_loader = load_data_loader(args=args, data=train_x[train_idx], label=train_y[train_idx], device=device, shuffl=True) #only train
+        train_loader = load_data_loader(args=args, data=train_x[train_idx], label=train_y[train_idx], device=device, shuffle=True) #only train
         valid_loader = load_data_loader(args=args, data=train_x, label=train_y, mask=valid_idx, device=device, shuffle=False) #train + valid
         
         optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
