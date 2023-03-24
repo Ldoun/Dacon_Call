@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
     seed_everything(args.seed)
     model_module = importlib.import_module("torch_geometric.nn.models")
-    model = getattr(model_module, args.model)
+    model_module = getattr(model_module, args.model)
 
     trial = str(len(os.listdir('./model_file')))
     model_path = os.path.join('model_file', trial)
