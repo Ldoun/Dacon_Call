@@ -34,12 +34,13 @@ class Trainer():
             prediction[prediction <= 0.5] = 0
             prediction[prediction > 0.5] = 1
 
-            train_f1_score = f1_score(y, prediction)
+            np_y = y.detach().cpu().numpy()
+            train_f1_score = f1_score(np_y, prediction)
             loss.append(train_loss.item())
             f1.append(train_f1_score)
             
-            pos_acc.append(sum(prediction[y==1] == 1) / len(y==1))
-            neg_acc.append(sum(prediction[y==0] == 0) / len(y==0))
+            pos_acc.append(sum(prediction[np_y==1] == 1) / sum(np_y==1))
+            neg_acc.append(sum(prediction[np_y==0] == 0) / sum(np_y==0))
 
         return sum(loss)/len(loss), sum(f1)/len(f1), float(sum(pos_acc)/len(pos_acc)), float(sum(neg_acc)/len(neg_acc))
 
@@ -61,12 +62,13 @@ class Trainer():
                 prediction[prediction <= 0.5] = 0
                 prediction[prediction > 0.5] = 1
 
-                valid_f1_score = f1_score(y, prediction)
+                np_y = y.detach().cpu().numpy()
+                valid_f1_score = f1_score(np_y, prediction)
                 loss.append(valid_loss.item())
                 f1.append(valid_f1_score)
 
-                pos_acc.append(sum(prediction[y==1] == 1) / len(y==1))
-                neg_acc.append(sum(prediction[y==0] == 0) / len(y==0))
+                pos_acc.append(sum(prediction[np_y==1] == 1) / sum(np_y==1))
+                neg_acc.append(sum(prediction[np_y==0] == 0) / sum(np_y==0))
 
         return sum(loss)/len(loss), sum(f1)/len(f1), float(sum(pos_acc)/len(pos_acc)), float(sum(neg_acc)/len(neg_acc))
                     
