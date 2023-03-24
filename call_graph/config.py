@@ -15,7 +15,7 @@ def get_config():
     parser.add_argument('--batch_size', default=10000, type=int)
 
     #model
-    parser.add_argument('--model', default='sage')
+    parser.add_argument('--model', default='GraphSAGE')
     parser.add_argument('--hidden', default=16, type=int)
     parser.add_argument('--n_layer', default=3, type=int)
     parser.add_argument('--drop_p', default=0.5, type=float)
