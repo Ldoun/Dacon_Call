@@ -17,7 +17,7 @@ def get_config():
     #model
     parser.add_argument('--model', default='GraphSAGE')
     parser.add_argument('--hidden', default=16, type=int)
-    parser.add_argument('--n_layer', default=3, type=int)
+    parser.add_argument('--n_layer', default=2, type=int)
     parser.add_argument('--drop_p', default=0.5, type=float)
 
     #experiment

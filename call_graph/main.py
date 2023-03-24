@@ -58,7 +58,7 @@ if __name__ == "__main__":
     for fold_idx, (train_idx, valid_idx) in enumerate(skf.split(train_x, train_y)):
         print(f'---------{fold_idx}-fold-------------')
         model = model_module(
-            input_size=train_x.shape[1], hidden_size=args.hidden, output_size=1, n_layer=args.n_layer, drop_p=args.drop_p
+            in_channels=train_x.shape[1], hidden_channels=args.hidden, out_channels=1, num_layers=args.n_layer, dropout=args.drop_p
         ).to(device)
         
         if fold_idx == 0:
