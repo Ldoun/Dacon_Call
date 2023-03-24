@@ -61,8 +61,10 @@ if __name__ == "__main__":
         if fold_idx == 0:
             print(model)
 
+        print('train------------')
         train_loader = load_data_loader(
             args=args, data=train_x[train_idx], label=train_y[train_idx], is_train=True, use_oversample=args.oversampling)
+        print('valid------------')
         valid_loader = load_data_loader(
             args=args, data=train_x[valid_idx], label=train_y[valid_idx], is_train=True)
         
@@ -77,6 +79,7 @@ if __name__ == "__main__":
         trainer = Trainer(args, train_loader, valid_loader, model, optimizer, loss_fn, device, model_path)
         validation_f1.append(trainer.train())
 
+        print('test------------')
         test_loader = load_data_loader(args=args, data=test_x, is_train=False)
         test_prediction[f'{fold_idx}-fold'] = pd.Series(trainer.test(test_loader))
         test_prediction.to_csv(test_file, index=False)
