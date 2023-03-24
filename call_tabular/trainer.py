@@ -37,8 +37,8 @@ class Trainer():
             loss.append(train_loss.item())
             f1.append(train_f1_score)
             
-            pos_acc.append(sum(prediction[batch['y']==1] == 1) / len(batch['y']==1))
-            neg_acc.append(sum(prediction[batch['y']==0] == 0) / len(batch['y']==0))
+            pos_acc.append(sum(prediction[batch['y']==1] == 1) / sum(batch['y']==1))
+            neg_acc.append(sum(prediction[batch['y']==0] == 0) / sum(batch['y']==0))
 
         return sum(loss)/len(loss), sum(f1)/len(f1), float(sum(pos_acc)/len(pos_acc)), float(sum(neg_acc)/len(neg_acc))
 
@@ -63,8 +63,8 @@ class Trainer():
                 loss.append(valid_loss.item())
                 f1.append(valid_f1_score)
 
-                pos_acc.append(sum(prediction[batch['y']==1] == 1) / len(batch['y']==1))
-                neg_acc.append(sum(prediction[batch['y']==0] == 0) / len(batch['y']==0))
+                pos_acc.append(sum(prediction[batch['y']==1] == 1) / sum(batch['y']==1))
+                neg_acc.append(sum(prediction[batch['y']==0] == 0) / sum(batch['y']==0))
 
         return sum(loss)/len(loss), sum(f1)/len(f1), float(sum(pos_acc)/len(pos_acc)), float(sum(neg_acc)/len(neg_acc))
                     
