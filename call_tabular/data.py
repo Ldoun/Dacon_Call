@@ -12,7 +12,8 @@ class TabularDataset(Dataset):
         if use_oversample:
             ros = RandomOverSampler()
             self.data, self.label = ros.fit_resample(data, label)
-        
+            print('using over sampled data')
+
         if self.is_train:
             self.label = torch.tensor(label, dtype=torch.float)
         self.data = torch.tensor(data, dtype=torch.float)
