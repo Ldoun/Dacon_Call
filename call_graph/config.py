@@ -25,4 +25,8 @@ def get_config():
     parser.add_argument('--weighted_loss', action='store_true', default=False)
     parser.add_argument('--stacking_file', type=str, default=None)
 
+    #graph
+    parser.add_argument('--num_neighbor', default=30, type=int, help="argument for number of the node to sample in one iteration")
+    parser.add_argument('--num_hop', default=2, type=int, help= "should be same as number of the layer")
+
     return parser.parse_args()
