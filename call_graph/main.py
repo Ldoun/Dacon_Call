@@ -65,9 +65,9 @@ if __name__ == "__main__":
             print(model)
 
         train_loader = load_data_loader(
-            args=args, data=train_x[train_idx], label=train_y[train_idx], is_train=True, use_oversample=args.oversampling) #only train
+            args=args, data=train_x[train_idx], label=train_y[train_idx], use_oversample=args.oversampling) #only train
         valid_loader = load_data_loader(
-            args=args, data=train_x, label=train_y, mask=valid_idx, is_train=True) #train + valid
+            args=args, data=train_x, label=train_y, mask=valid_idx) #train + valid
         
         optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
         if args.weighted_loss:
@@ -80,7 +80,7 @@ if __name__ == "__main__":
         trainer = Trainer(args, train_loader, valid_loader, model, optimizer, loss_fn, device, model_path)
         validation_f1.append(trainer.train())
 
-        test_loader = load_data_loader(args=args, data=all_x, mask=test_idx, is_train=False) #train + valid + test
+        test_loader = load_data_loader(args=args, data=all_x, mask=test_idx) #train + valid + test
         test_prediction[f'{fold_idx}-fold'] = pd.Series(trainer.test(test_loader))
         test_prediction.to_csv(test_file, index=False)
 
