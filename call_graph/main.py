@@ -65,7 +65,7 @@ if __name__ == "__main__":
             print(model)
 
         train_loader = load_data_loader(
-            args=args, data=train_x[train_idx], label=train_y[train_idx], use_oversample=args.oversampling) #only train
+            args=args, data=train_x[train_idx], label=train_y[train_idx]) #only train
         valid_loader = load_data_loader(
             args=args, data=train_x, label=train_y, mask=valid_idx) #train + valid
         

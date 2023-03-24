@@ -21,7 +21,7 @@ def get_config():
     parser.add_argument('--drop_p', default=0.5, type=float)
 
     #experiment
-    parser.add_argument('--oversampling', action='store_true', default=False)
+    #parser.add_argument('--oversampling', action='store_true', default=False) disable
     parser.add_argument('--weighted_loss', action='store_true', default=False)
     parser.add_argument('--stacking_file', type=str, default=None)
 
