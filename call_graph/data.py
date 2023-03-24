@@ -6,6 +6,8 @@ import torch.nn.functional as f
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 
+from utils import print_variable
+
 def load_csv_data(path):
     train_csv = os.path.join(path, 'train.csv')
     test_csv = os.path.join(path, 'test.csv')
@@ -21,6 +23,8 @@ def load_csv_data(path):
 
 def load_data_loader(args, data, mask=None, label=None, device='cpu', shuffle=False):
     data = torch.tensor(data, dtype=torch.float, device=device)
+    if label is not None:
+        label = torch.tensor(label, dtype=torch.float, device=device).unsqueeze(-1)
     edge_index = construct_graph(data, device=device)
     dataloader = get_dataloader(data, edge_index, mask=mask, label=label, num_neighbors=[args.num_neighbor] * args.num_hop, batch_size=args.batch_size, shuffle=shuffle)
 
@@ -39,6 +43,11 @@ def construct_graph(feature, device):
     return cordinate.T
 
 def get_dataloader(features, edge_index, mask, num_neighbors, batch_size, label=None, shuffle=False):
+    if label is not None:
+        print_variable({'x' : features, 'edge' : edge_index, label:label})
+    else:
+        print_variable({'x' : features, 'edge' : edge_index})
+
     data = Data(
         x = features,
         edge_index = edge_index,
