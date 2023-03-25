@@ -23,6 +23,7 @@ def get_config():
     #experiment
     #parser.add_argument('--oversampling', action='store_true', default=False) disable
     parser.add_argument('--weighted_loss', action='store_true', default=False)
+    parser.add_argument('--pos_weight', type=float, default=None)
     parser.add_argument('--stacking_file', type=str, default=None)
 
     #graph
