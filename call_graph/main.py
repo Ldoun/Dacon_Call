@@ -38,9 +38,6 @@ if __name__ == "__main__":
     test_x = scaler.transform(test_x.values)
     train_y = train_y.values
 
-    all_x = np.concatenate([train_x, test_x], axis=0)
-    test_idx = np.array(range(train_x.shape[0], all_x.shape[0]))
-
     if args.stacking_file is not None:
         print(f'train_x shape: {train_x.shape}')
         train_prediction = pd.read_csv(os.path.join(args.raw_path, args.stacking_file+'train.csv'))
@@ -48,6 +45,9 @@ if __name__ == "__main__":
         train_x = np.concatenate([train_x,train_prediction.values],axis=1)
         test_x = np.concatenate([test_x,test_prediction.values],axis=1)
         print(f'stacking train_x shape: {train_x.shape}')
+
+    all_x = np.concatenate([train_x, test_x], axis=0)
+    test_idx = np.array(range(train_x.shape[0], all_x.shape[0]))
 
     skf = StratifiedKFold(n_splits=args.n_fold, random_state=args.seed, shuffle=True)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -71,7 +71,7 @@ if __name__ == "__main__":
         
         optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
         if args.weighted_loss:
-            weight = [(1 - (train_y[train_idx]==1).sum()/len(train_idx))*10]
+            weight = [(1 - (train_y[train_idx]==1).sum()/len(train_idx))*10] if args.pos_weight is None else args.pos_weight
             print(f"Using weight of {weight}")
             loss_fn = torch.nn.BCEWithLogitsLoss(pos_weight=torch.tensor(weight, dtype=torch.float, device=device))
         else:
