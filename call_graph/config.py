@@ -28,5 +28,6 @@ def get_config():
     #graph
     parser.add_argument('--num_neighbor', default=30, type=int, help="argument for number of the node to sample in one iteration")
     parser.add_argument('--num_hop', default=2, type=int, help= "should be same as number of the layer")
+    parser.add_argument('--topk', default=5, type=int, help= "top k sample to connect")
 
     return parser.parse_args()

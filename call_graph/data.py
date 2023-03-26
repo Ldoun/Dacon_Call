@@ -25,17 +25,17 @@ def load_data_loader(args, data, mask=None, label=None, device='cpu', shuffle=Fa
     data = torch.tensor(data, dtype=torch.float, device=device)
     if label is not None:
         label = torch.tensor(label, dtype=torch.float, device=device).unsqueeze(-1)
-    edge_index = construct_graph(data, device=device)
+    edge_index = construct_graph(data, topk=args.topk, device=device)
     dataloader = get_dataloader(data, edge_index, mask=mask, label=label, num_neighbors=[args.num_neighbor] * args.num_hop, batch_size=args.batch_size, shuffle=shuffle)
 
     return dataloader
 
-def construct_graph(feature, device):
+def construct_graph(feature, topk, device):
     cordinate = torch.tensor([], dtype=torch.long, device=device)
     for index, sample in enumerate(feature):
         similarity = f.cosine_similarity(sample, feature, dim=1)
         similarity[index] = 0.
-        _, top_similar_samples = similarity.topk(5)
+        _, top_similar_samples = similarity.topk(topk)
         row = torch.tensor([index]*len(top_similar_samples), dtype=torch.long, device=device)
         temp = torch.stack([row, top_similar_samples],dim=1)
         cordinate = torch.concat([cordinate, temp], dim=0)
