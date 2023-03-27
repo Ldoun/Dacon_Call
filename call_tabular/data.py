@@ -33,9 +33,9 @@ def load_data_loader(args, data, label=None,is_train=False,use_oversample=False)
     dataloader = DataLoader(dataset, args.batch_size, shuffle=is_train, pin_memory=is_train, num_workers=2)
     return dataloader
 
-def load_csv_data(path):
-    train_csv = os.path.join(path, 'train.csv')
-    test_csv = os.path.join(path, 'test.csv')
+def load_csv_data(path, csv_data = None):
+    train_csv = os.path.join(path, 'train.csv' if csv_data == None else csv_data + 'train.csv')
+    test_csv = os.path.join(path, 'test.csv' if csv_data == None else csv_data + 'test.csv')
 
     train_data = pd.read_csv(train_csv)
     test_data = pd.read_csv(test_csv)

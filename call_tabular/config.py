@@ -5,6 +5,7 @@ def get_config():
 
     #default
     parser.add_argument("--raw_path", default= '../../data')
+    parser.add_argument("--csv_data", default= None)
 
     #train
     parser.add_argument('--seed', default=42, type=int)

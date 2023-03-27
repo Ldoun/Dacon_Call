@@ -30,7 +30,7 @@ if __name__ == "__main__":
     test_file = f'{trial}.csv'
     print(f'saving test result to {test_file}')
 
-    train_x, train_y, test_x = load_csv_data(args.raw_path)
+    train_x, train_y, test_x = load_csv_data(args.raw_path, args.csv_data)
     scaler = MinMaxScaler()
     scaler.fit(train_x.values)
     
